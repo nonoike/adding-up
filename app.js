@@ -47,9 +47,20 @@ rl.resume();
 
 // 最終結果の表示
 rl.on('close', () => {
+    // 変化率の計算
     for (let pair of prefectureAndAggregate) { // 中身をofの前の変数に代入してloop
         const aggregate = pair[1]; // [0]: key, [1]: value
         aggregate.changeRate = aggregate.population2015 / aggregate.population2010;
     }
-    console.log(prefectureAndAggregate);
+
+    // データのソート
+    const rankingArray = Array.from(prefectureAndAggregate)
+        .sort((pair1, pair2) => { // 大を前にしたいなら正の整数
+            if (pair1[1].changeRate < pair2[1].changeRate) return 1;
+            if (pair2[1].changeRate < pair1[1].changeRate) return -1;
+            return 0;
+        });
+
+    // 出力
+    console.log(rankingArray);
 });
