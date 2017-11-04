@@ -25,7 +25,8 @@ rl.on('line', (lineString) => {
     if (!aggregate) {
         aggregate = {
             population2010: 0,
-            population2015: 0
+            population2015: 0,
+            changeRate: null
         };
     }
 
@@ -46,5 +47,9 @@ rl.resume();
 
 // 最終結果の表示
 rl.on('close', () => {
+    for (let pair of prefectureAndAggregate) { // 中身をofの前の変数に代入してloop
+        const aggregate = pair[1]; // [0]: key, [1]: value
+        aggregate.changeRate = aggregate.population2015 / aggregate.population2010;
+    }
     console.log(prefectureAndAggregate);
 });
