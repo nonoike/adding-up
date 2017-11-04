@@ -7,6 +7,7 @@ const readline = require('readline');
 const rs = fs.ReadStream('./popu-pref.csv');
 const rl = readline.createInterface({ 'input': rs, 'output': {} });
 
+const prefectureAndAggregate = new Map(); // key: 都道府県, value: 集計結果オブジェクト */
 // lineイベントが発生したら処理をする
 rl.on('line', (lineString) => {
     // 行をカンマで分割し、必要なカラムを保持する
@@ -15,12 +16,35 @@ rl.on('line', (lineString) => {
     const prefecture = columns[2];
     const population = parseInt(columns[7]);
     // 対象データを絞り込む
-    if (year === 2010 || year === 2015) {
-        console.log(year);
-        console.log(prefecture);
-        console.log(population);
+    if (year !== 2010 && year !== 2015) {
+        return;
     }
+
+    // 新規都道府県の判別
+    let aggregate = prefectureAndAggregate.get(prefecture);
+    if (!aggregate) {
+        aggregate = {
+            population2010: 0,
+            population2015: 0
+        };
+    }
+
+    // 人口集計
+    if (year === 2010) {
+        aggregate.population2010 += population;
+    }
+    if (year === 2015) {
+        aggregate.population2015 += population;
+    }
+
+    // 集計結果を追加もしくは置換
+    prefectureAndAggregate.set(prefecture, aggregate);
 });
 
 // ストリームに情報を流す
 rl.resume();
+
+// 最終結果の表示
+rl.on('close', () => {
+    console.log(prefectureAndAggregate);
+});
