@@ -61,6 +61,11 @@ rl.on('close', () => {
             return 0;
         });
 
+    // フォーマット
+    const rankingStrings = rankingArray.map((pair) => {
+        return pair[0] + ': ' + pair[1].population2010 + ' => ' + pair[1].population2015 + ' 変化率: ' + pair[1].changeRate;
+    });
+
     // 出力
-    console.log(rankingArray);
+    console.log(rankingStrings);
 });
